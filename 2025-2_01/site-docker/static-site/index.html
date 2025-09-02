@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <title>Jogo da Cobrinha</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- cover + safe-area para iOS; limitamos zoom e zoom por gesto -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta name="color-scheme" content="dark light">
   <style>
     :root{
-      --bg: #0b1020; --panel:#10172a; --text:#e5e7eb; --muted:#9ca3af;
+      --bg:#0b1020; --panel:#10172a; --text:#e5e7eb; --muted:#9ca3af;
       --accent:#60a5fa; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
       --grid:#1f2937; --snake:#34d399; --snake2:#10b981; --food:#fb7185;
       --shadow: 0 10px 24px rgba(0,0,0,.35);
@@ -19,13 +20,17 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font:15px/1.6 system-ui, -apple-system, Segoe UI, Roboto;
+      margin:0; font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto;
       background:
         radial-gradient(900px 500px at 100% -10%, rgba(96,165,250,.15), transparent 60%),
         radial-gradient(700px 400px at -10% 10%, rgba(168,85,247,.18), transparent 60%),
         linear-gradient(180deg, var(--bg), #0b1224);
-      color:var(--text); touch-action:none;
+      color:var(--text);
+      /* evita rolagem e gestos acidentais durante o jogo */
+      overscroll-behavior: none;
+      touch-action: none;
     }
+
     .wrap{max-width:980px;margin:0 auto;padding:22px 14px 40px}
     header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
     h1{margin:0;font-size:clamp(22px,3vw,30px)}
@@ -44,7 +49,9 @@
     .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
     button, select{
       appearance:none;border:1px solid rgba(255,255,255,.14);background:#0f172a;color:var(--text);
-      padding:8px 12px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow);
+      padding:10px 14px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow);
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     button:hover,select:hover{border-color:rgba(96,165,250,.45)}
     button.primary{background:linear-gradient(135deg,#0ea5e9,#7c3aed);border-color:transparent;color:#fff;font-weight:600}
@@ -72,24 +79,52 @@
     .overlay h2{margin:0 0 6px;font-size:clamp(22px,3.2vw,32px)}
     .overlay .sub{opacity:.9}
 
-    /* D-Pad para mobile */
+    footer{text-align:center;margin-top:16px;color:var(--muted);font-size:13px}
+    a{color:#93c5fd}
+
+    /* -------- Barra mobile fixa (apenas em touch) -------- */
+    .mobile-keys{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      background:rgba(15,23,42,.92);
+      border-top:1px solid rgba(255,255,255,.12);
+      box-shadow:0 -10px 30px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+      display:none; /* padrão desktop: escondido */
+      z-index:9999; /* garante ficar acima de tudo */
+      contain: layout paint size;
+    }
+    .mk-wrap{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+    /* D-pad */
     .dpad{
-      margin-top:10px; display:grid; grid-template-areas:
+      display:grid; grid-template-areas:
         ". up ."
         "left mid right"
         ". down .";
-      gap:8px; width:min(320px, 80%); margin-inline:auto;
-      user-select:none;
+      gap:10px; width:min(220px, 48vw); user-select:none;
     }
     .dpad button{
-      aspect-ratio:1/1; font-size:20px; padding:0; border-radius:12px;
-      background:rgba(255,255,255,.08);
+      aspect-ratio:1/1; font-size:22px; padding:0; border-radius:14px;
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:var(--text);
+      min-width:48px; /* garante clique confortável */
     }
     .dpad .up{grid-area:up} .dpad .down{grid-area:down}
     .dpad .left{grid-area:left} .dpad .right{grid-area:right}
     .dpad .mid{grid-area:mid;visibility:hidden}
-    footer{text-align:center;margin-top:16px;color:var(--muted);font-size:13px}
-    a{color:#93c5fd}
+
+    /* Ações rápidas */
+    .mk-actions{display:flex;gap:8px}
+    .mk-actions button{min-width:88px;font-weight:600;padding:10px 14px;border-radius:14px}
+    .mk-actions .primary{background:linear-gradient(135deg,#0ea5e9,#7c3aed);border-color:transparent;color:#fff}
+    .mk-actions .ghost{background:rgba(255,255,255,.06)}
+
+    /* Só mostra em dispositivos touch/coarse pointer */
+    @media (hover:none) and (pointer:coarse) {
+      .mobile-keys{ display:block; }
+      /* Esconde o D-pad da página (usamos o fixo) */
+      .page-dpad{ display:none !important; }
+    }
   </style>
 </head>
 <body>
@@ -135,7 +170,6 @@
           <div id="overlayStart" class="overlay show" role="dialog" aria-live="polite">
             <div>
               <h2>Pronto para jogar?</h2>
-              <div class="sub">Pressione <strong>Iniciar</strong> ou <strong>Espaço</strong>.</div>
             </div>
           </div>
           <div id="overlayPause" class="overlay" role="dialog" aria-live="polite">
@@ -152,12 +186,13 @@
           </div>
         </div>
 
-        <div class="dpad" aria-label="Controles de direção (mobile)">
-          <button class="up" data-dir="0,-1">▲</button>
-          <button class="left" data-dir="-1,0">◀</button>
+        <!-- D-pad na página (usado no desktop/telas maiores) -->
+        <div class="dpad page-dpad" aria-label="Controles de direção">
+          <button class="up" data-dir="0,-1" aria-label="Cima">▲</button>
+          <button class="left" data-dir="-1,0" aria-label="Esquerda">◀</button>
           <button class="mid" disabled></button>
-          <button class="right" data-dir="1,0">▶</button>
-          <button class="down" data-dir="0,1">▼</button>
+          <button class="right" data-dir="1,0" aria-label="Direita">▶</button>
+          <button class="down" data-dir="0,1" aria-label="Baixo">▼</button>
         </div>
 
         <footer>
@@ -173,20 +208,36 @@
           <li>Evite colidir com o próprio corpo (ou com as paredes se o wrap estiver desativado).</li>
           <li><strong>Espaço</strong> pausa/retoma, <strong>R</strong> reinicia.</li>
         </ul>
-        <p class="muted">Dica: no modo <em>Wrap nas bordas</em>, dá para planejar trajetórias passando de um lado ao outro do tabuleiro.</p>
-        <hr style="border:none;border-top:1px dashed rgba(255,255,255,.18);margin:14px 0">
         <p class="muted">Este jogo é 100% client-side; o recorde fica salvo via <code>localStorage</code>.</p>
       </aside>
     </div>
   </div>
 
+  <!-- Barra de controles fixa (apenas mobile/touch) -->
+  <div class="mobile-keys" role="group" aria-label="Controles de jogo (mobile)">
+    <div class="mk-wrap">
+      <div class="dpad" aria-label="Direção">
+        <button class="up"    data-dir="0,-1" aria-label="Cima">▲</button>
+        <button class="left"  data-dir="-1,0" aria-label="Esquerda">◀</button>
+        <button class="mid" disabled></button>
+        <button class="right" data-dir="1,0" aria-label="Direita">▶</button>
+        <button class="down"  data-dir="0,1" aria-label="Baixo">▼</button>
+      </div>
+      <div class="mk-actions" aria-label="Ações">
+        <button id="mkStart" class="primary">▶️ Iniciar</button>
+        <button id="mkPause" class="ghost">⏸️ Pausar</button>
+        <button id="mkReset" class="ghost">🔄</button>
+      </div>
+    </div>
+  </div>
+
   <script>
   (() => {
-    // ======= Configuração básica =======
-    const GRID = 21;              // 21x21 células
-    const SIZE = 504;             // pixels do canvas (quadrado)
-    const CELL = SIZE / GRID;     // tamanho de cada célula
-    const SPEED_DEFAULT = 130;    // ms por tick
+    // ======= Configuração =======
+    const GRID = 21;           // 21x21 células
+    const SIZE = 504;          // pixels do canvas (quadrado)
+    const CELL = SIZE / GRID;  // tamanho de cada célula
+    const SPEED_DEFAULT = 130; // ms por tick
     const COLORS = {
       grid: getCSS('--grid'),
       snake: getCSS('--snake'),
@@ -194,10 +245,9 @@
       food: getCSS('--food')
     };
 
-    // ======= Estado do jogo =======
+    // ======= Estado =======
     let snake, dir, dirQueue, food, score, best, timer = null, speed = SPEED_DEFAULT;
     let playing = false, paused = false, gameOver = false, wrap = false;
-    let changedThisTick = false;
 
     // ======= Elementos =======
     const cvs = document.getElementById('game');
@@ -214,7 +264,13 @@
     const $ovPause = document.getElementById('overlayPause');
     const $ovOver  = document.getElementById('overlayOver');
 
-    // Ajuste visual (responsivo simples)
+    // Mobile bar
+    const $mkStart = document.getElementById('mkStart');
+    const $mkPause = document.getElementById('mkPause');
+    const $mkReset = document.getElementById('mkReset');
+    const $mobileBar = document.querySelector('.mobile-keys');
+
+    // Canvas responsivo
     cvs.style.maxWidth = '100%';
     cvs.style.height = 'auto';
 
@@ -236,7 +292,6 @@
       updateScore(0);
       food = spawnFood();
       playing = false; paused = false; gameOver = false;
-      changedThisTick = false;
       draw();
       showOverlay('start');
     }
@@ -252,13 +307,8 @@
     function pauseGame(){
       if (!playing || gameOver) return;
       paused = !paused;
-      if (paused) {
-        stopLoop();
-        showOverlay('pause');
-      } else {
-        hideOverlays();
-        runLoop();
-      }
+      if (paused) { stopLoop(); showOverlay('pause'); }
+      else { hideOverlays(); runLoop(); }
     }
 
     function endGame(){
@@ -272,23 +322,15 @@
       showOverlay('over');
     }
 
-    function runLoop(){
-      stopLoop();
-      timer = setInterval(tick, speed);
-    }
-    function stopLoop(){
-      if (timer) clearInterval(timer);
-      timer = null;
-    }
+    function runLoop(){ stopLoop(); timer = setInterval(tick, speed); }
+    function stopLoop(){ if (timer) clearInterval(timer); timer = null; }
 
     // ======= Mecânica =======
     function tick(){
-      // Consome próxima direção (se houver)
       if (dirQueue.length){
         const next = dirQueue.shift();
         dir = next;
       }
-      changedThisTick = false;
 
       const head = snake[snake.length - 1];
       let nx = head.x + dir.x;
@@ -298,35 +340,27 @@
         nx = (nx + GRID) % GRID;
         ny = (ny + GRID) % GRID;
       } else {
-        if (nx < 0 || nx >= GRID || ny < 0 || ny >= GRID){
-          endGame(); return;
-        }
+        if (nx < 0 || nx >= GRID || ny < 0 || ny >= GRID){ endGame(); return; }
       }
 
       const newHead = {x: nx, y: ny};
 
       // Colisão com o próprio corpo
-      if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)){
-        endGame(); return;
-      }
+      if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)){ endGame(); return; }
 
       snake.push(newHead);
 
       // Comeu?
       if (newHead.x === food.x && newHead.y === food.y){
-        score += 10;
-        updateScore(score);
-        food = spawnFood();
+        score += 10; updateScore(score); food = spawnFood();
       } else {
-        snake.shift(); // move sem crescer
+        snake.shift();
       }
 
       draw();
     }
 
-    function updateScore(v){
-      $score.textContent = v;
-    }
+    function updateScore(v){ $score.textContent = v; }
 
     function spawnFood(){
       let p;
@@ -338,23 +372,15 @@
 
     // ======= Desenho =======
     function draw(){
-      // Fundo
       ctx.clearRect(0,0,SIZE,SIZE);
       drawGrid();
-
-      // Comida
       drawCell(food.x, food.y, COLORS.food, true);
-
-      // Cobra
       for (let i = 0; i < snake.length; i++){
         const seg = snake[i];
-        // gradiente leve no corpo
         const t = i / (snake.length - 1 || 1);
         const col = mixColor(COLORS.snake2, COLORS.snake, t);
         drawCell(seg.x, seg.y, col);
       }
-
-      // Olhos na cabeça
       const head = snake[snake.length-1];
       drawEyes(head, dir);
     }
@@ -380,14 +406,11 @@
       const sy = y*CELL + pad;
       const s = CELL - pad*2;
       roundRect(ctx, sx, sy, s, s, r);
-      ctx.fillStyle = color;
-      ctx.fill();
-      // brilho sutil
+      ctx.fillStyle = color; ctx.fill();
       const g = ctx.createRadialGradient(sx+s*0.3, sy+s*0.3, 2, sx, sy, s);
       g.addColorStop(0, 'rgba(255,255,255,.12)');
       g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = g;
-      roundRect(ctx, sx, sy, s, s, r); ctx.fill();
+      ctx.fillStyle = g; roundRect(ctx, sx, sy, s, s, r); ctx.fill();
     }
 
     function drawEyes(head, dir){
@@ -423,18 +446,8 @@
       }
     }, { passive:false });
 
-    // D-Pad (toque/click)
-    document.querySelectorAll('.dpad button[data-dir]').forEach(btn=>{
-      btn.addEventListener('click', () => {
-        const [x,y] = btn.dataset.dir.split(',').map(Number);
-        queueDir({x,y});
-      });
-      btn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const [x,y] = btn.dataset.dir.split(',').map(Number);
-        queueDir({x,y});
-      }, { passive:false });
-    });
+    // D-pads (página e barra mobile)
+    addDpadListeners(document);
 
     // Swipe (mobile)
     let tStart = null;
@@ -456,25 +469,27 @@
     });
 
     function queueDir(n){
-      if (changedThisTick) {
-        // Já trocou nesse tick, empilha para o próximo
-      }
-      const last = dirQueue[dirQueue.length-1] || dir;
+      const last = dirQueue?.[dirQueue.length-1] || dir;
       if (n.x === -last.x && n.y === -last.y) return; // evita 180º instantâneo
-      dirQueue.push(n);
-      changedThisTick = true;
+      (dirQueue ||= []).push(n);
     }
 
-    // Botões UI
-    $start.addEventListener('click', startGame);
-    $pause.addEventListener('click', pauseGame);
-    $reset.addEventListener('click', resetGame);
+    // Botões UI (desktop)
+    $start.addEventListener('click', startGame, {passive:true});
+    $pause.addEventListener('click', pauseGame, {passive:true});
+    $reset.addEventListener('click', resetGame, {passive:true});
+    // Botões UI (mobile bar)
+    if ($mkStart) $mkStart.addEventListener('click', startGame, {passive:true});
+    if ($mkPause) $mkPause.addEventListener('click', pauseGame, {passive:true});
+    if ($mkReset) $mkReset.addEventListener('click', resetGame, {passive:true});
+
     $speed.addEventListener('change', () => {
       speed = Number($speed.value);
       $spdLabel.textContent = labelSpeed(speed);
       if (playing && !paused){ runLoop(); }
-    });
-    $wrap.addEventListener('change', () => { wrap = $wrap.checked; });
+    }, {passive:true});
+
+    $wrap.addEventListener('change', () => { wrap = $wrap.checked; }, {passive:true});
 
     function labelSpeed(ms){
       if (ms <= 75) return 'Insano';
@@ -518,13 +533,52 @@
     }
     function getCSS(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#fff' }
 
+    function addDpadListeners(root){
+      root.querySelectorAll('.dpad button[data-dir]').forEach(btn=>{
+        const send = () => {
+          const [x,y] = btn.dataset.dir.split(',').map(Number);
+          queueDir({x,y});
+        };
+        btn.addEventListener('click', send, {passive:true});
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); send(); }, { passive:false });
+      });
+    }
+
+    // ======= Ajuste crítico: reserva espaço p/ barra mobile =======
+    function applyMobilePadding(){
+      // Só se a barra existir/estiver visível
+      const isTouch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+      if (!isTouch || !$mobileBar) { document.body.style.paddingBottom = ''; return; }
+      // altura real da barra (inclui safe-area via CSS)
+      const barH = Math.ceil($mobileBar.getBoundingClientRect().height);
+      document.body.style.paddingBottom = barH + 'px';
+    }
+
+    // Atualiza em eventos relevantes
+    window.addEventListener('resize', applyMobilePadding);
+    window.addEventListener('orientationchange', () => setTimeout(applyMobilePadding, 200));
+    if (window.visualViewport){
+      window.visualViewport.addEventListener('resize', applyMobilePadding);
+    }
+
+    // Prev. zoom por duplo toque no iOS
+    let lastTouch = 0;
+    window.addEventListener('touchend', e => {
+      const now = Date.now();
+      if (now - lastTouch < 300) e.preventDefault();
+      lastTouch = now;
+    }, { passive:false });
+
     // ======= Começa pronto =======
-    // Valores iniciais da UI
     speed = Number($speed.value);
     $spdLabel.textContent = labelSpeed(speed);
     wrap = $wrap.checked;
-
     resetGame();
+
+    // aplica padding inicial após layout
+    requestAnimationFrame(applyMobilePadding);
+    // e repete mais uma vez (útil quando a barra do navegador recolhe)
+    setTimeout(applyMobilePadding, 400);
   })();
   </script>
 </body>
