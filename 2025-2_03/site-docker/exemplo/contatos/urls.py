@@ -1,0 +1,4 @@
+
+
+# URLs patterns
+urlpatterns = []
