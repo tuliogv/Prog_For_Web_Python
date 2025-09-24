@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ view.object|default_if_none:"Novo Post" }} — {{ block.super }}{% endblock %}
+{% block content %}
+<h2>{% if view.object %}Editar Post{% else %}Novo Post{% endif %}</h2>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn">{% if view.object %}Salvar{% else %}Publicar{% endif %}</button>
+  <a href="{% url 'posts:list' %}" class="btn btn-outlined">Cancelar</a>
+</form>
+{% endblock %}

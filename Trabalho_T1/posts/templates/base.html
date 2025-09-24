@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}MiniTwitter Texto{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+</head>
+<body>
+  <header class="container">
+    <h1><a href="{% url 'posts:list' %}">MiniTwitter (texto)</a></h1>
+    <nav>
+      {% if user.is_authenticated %}
+        <span>Olá, {{ user.username }}{% if user.is_staff %} (staff){% endif %}</span>
+        <a href="{% url 'posts:create' %}" class="btn">Novo post</a>
+        <a href="{% url 'logout' %}" class="btn btn-outlined">Sair</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn">Entrar</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+      <ul class="messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="container">
+    <small>&copy; {{ now|date:"Y" }} — Feito em Django, sem JavaScript.</small>
+  </footer>
+</body>
+</html>

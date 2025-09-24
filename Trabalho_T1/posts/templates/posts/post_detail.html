@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Post — {{ block.super }}{% endblock %}
+{% block content %}
+<article class="card">
+  <div class="card-head">
+    <strong>@{{ post.author.username }}</strong>
+    <span class="muted">{{ post.created_at|date:"d/m/Y H:i" }}</span>
+  </div>
+  <p>{{ post.message|linebreaksbr }}</p>
+</article>
+<p>
+  <a href="{% url 'posts:list' %}">Voltar</a>
+  {% if user.is_staff or user.id == post.author_id %}
+    • <a href="{% url 'posts:update' post.pk %}">Editar</a>
+    • <a href="{% url 'posts:delete' post.pk %}">Excluir</a>
+  {% endif %}
+</p>
+{% endblock %}
