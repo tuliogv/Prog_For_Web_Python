@@ -15,15 +15,13 @@
       {% if user.is_authenticated %}
         <span>Olá, {{ user.username }}{% if user.is_staff %} (staff){% endif %}</span>
         <a href="{% url 'posts:create' %}" class="btn">Novo post</a>
-
-        <!-- Logout deve ser POST -->
         <form method="post" action="{% url 'logout' %}" style="display:inline;">
           {% csrf_token %}
           <button type="submit" class="btn btn-outlined">Sair</button>
         </form>
-
       {% else %}
         <a href="{% url 'login' %}" class="btn">Entrar</a>
+        <a href="{% url 'signup' %}" class="btn btn-outlined">Registrar</a>
       {% endif %}
     </nav>
   </header>

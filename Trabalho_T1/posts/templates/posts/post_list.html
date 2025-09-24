@@ -14,9 +14,11 @@
         <p>{{ p.message|linebreaksbr }}</p>
         <div class="card-actions">
           <a href="{% url 'posts:detail' p.pk %}">Ver</a>
-          {% if user.is_staff or user.id == p.author_id %}
-            • <a href="{% url 'posts:update' p.pk %}">Editar</a>
-            • <a href="{% url 'posts:delete' p.pk %}">Excluir</a>
+          {% if user.is_authenticated %}
+            {% if user.is_staff or user.id == p.author_id %}
+              • <a href="{% url 'posts:update' p.pk %}">Editar</a>
+              • <a href="{% url 'posts:delete' p.pk %}">Excluir</a>
+            {% endif %}
           {% endif %}
         </div>
       </li>
@@ -31,6 +33,6 @@
     </div>
   {% endif %}
 {% else %}
-  <p>Nenhum post por aqui… Crie o primeiro!</p>
+  <p>Nenhum post por aqui…</p>
 {% endif %}
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Registrar — {{ block.super }}{% endblock %}
+
+{% block content %}
+<h2>Criar nova conta</h2>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn">Registrar</button>
+  <a href="{% url 'login' %}" class="btn btn-outlined">Voltar ao login</a>
+</form>
+
+<p class="muted">
+  Após registrar, você será redirecionado para a página de login.
+</p>
+{% endblock %}

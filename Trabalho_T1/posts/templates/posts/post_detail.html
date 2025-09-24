@@ -10,9 +10,11 @@
 </article>
 <p>
   <a href="{% url 'posts:list' %}">Voltar</a>
-  {% if user.is_staff or user.id == post.author_id %}
-    • <a href="{% url 'posts:update' post.pk %}">Editar</a>
-    • <a href="{% url 'posts:delete' post.pk %}">Excluir</a>
+  {% if user.is_authenticated %}
+    {% if user.is_staff or user.id == post.author_id %}
+      • <a href="{% url 'posts:update' post.pk %}">Editar</a>
+      • <a href="{% url 'posts:delete' post.pk %}">Excluir</a>
+    {% endif %}
   {% endif %}
 </p>
 {% endblock %}
