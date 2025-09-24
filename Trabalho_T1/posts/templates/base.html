@@ -1,44 +1,61 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <title>{% block title %}MiniTwitter Texto{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   {% load static %}
-  <link href="{% static 'css/main.css' %}" rel="stylesheet">
+  <!-- Bootstrap CSS (apenas CSS, sem JS) -->
+  <!-- base.html: substitua o <link> do Bootstrap por ESTE -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+  crossorigin="anonymous"
+/>
+
 </head>
 <body>
-  <header class="container">
-    <h1><a href="{% url 'posts:list' %}">MiniTwitter (texto)</a></h1>
-    <nav>
-      {% if user.is_authenticated %}
-        <span>Olá, {{ user.username }}{% if user.is_staff %} (staff){% endif %}</span>
-        <a href="{% url 'posts:create' %}" class="btn">Novo post</a>
-        <form method="post" action="{% url 'logout' %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outlined">Sair</button>
-        </form>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn">Entrar</a>
-        <a href="{% url 'signup' %}" class="btn btn-outlined">Registrar</a>
-      {% endif %}
+  <header class="border-bottom mb-4">
+    <nav class="navbar navbar-expand-md bg-body-tertiary">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'posts:list' %}">MiniTwitter (texto)</a>
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+          {% if user.is_authenticated %}
+            <span class="text-body-secondary small me-1">
+              Olá, <strong>{{ user.username }}</strong>{% if user.is_staff %} <span class="badge text-bg-secondary ms-1">staff</span>{% endif %}
+            </span>
+            <a href="{% url 'posts:create' %}" class="btn btn-primary btn-sm m-1">Novo post</a>
+
+            <form method="post" action="{% url 'logout' %}" class="d-inline m-1">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-secondary btn-sm">Sair</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary btn-sm m-1">Entrar</a>
+            <a href="{% url 'signup' %}" class="btn btn-outline-secondary btn-sm m-1">Registrar</a>
+          {% endif %}
+        </div>
+      </div>
     </nav>
   </header>
 
   <main class="container">
     {% if messages %}
-      <ul class="messages">
+      <div class="mb-3">
         {% for m in messages %}
-          <li>{{ m }}</li>
+          <div class="alert alert-info mb-2" role="alert">{{ m }}</div>
         {% endfor %}
-      </ul>
+      </div>
     {% endif %}
+
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="container">
-    <small>&copy; {{ now|date:"Y" }} — Feito em Django, sem JavaScript.</small>
+  <footer class="container py-4 mt-5 border-top">
+    <p class="mb-0 text-body-secondary small">&copy; {{ now|date:"Y" }} — Feito em Django, sem JavaScript.</p>
   </footer>
 </body>
 </html>

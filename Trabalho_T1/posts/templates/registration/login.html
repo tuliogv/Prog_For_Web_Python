@@ -2,34 +2,44 @@
 {% block title %}Entrar — {{ block.super }}{% endblock %}
 
 {% block content %}
-<h2>Entrar</h2>
-<form method="post" novalidate>
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn">Entrar</button>
-  <a href="{% url 'signup' %}" class="btn btn-outlined">Registrar</a>
-</form>
+<div class="row g-4">
+  <div class="col-12 col-lg-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3">Entrar</h2>
+        <form method="post" novalidate class="vstack gap-3">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary m-1">Entrar</button>
+            <a href="{% url 'signup' %}" class="btn btn-outline-secondary m-1">Registrar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-<hr>
+  <div class="col-12 col-lg-7">
+    <h3 class="h5 mb-3">Mensagens recentes (somente leitura)</h3>
 
-<h3>Mensagens recentes (somente leitura)</h3>
-{% if recent_posts %}
-  <ul class="cards">
-    {% for p in recent_posts %}
-      <li class="card">
-        <div class="card-head">
-          <strong>@{{ p.author.username }}</strong>
-          <span class="muted">{{ p.created_at|date:"d/m/Y H:i" }}</span>
-        </div>
-        <p>{{ p.message|linebreaksbr }}</p>
-        <div class="card-actions">
-          <a href="{% url 'posts:detail' p.pk %}">Ver</a>
-          <!-- Sem editar/excluir aqui (usuário não autenticado) -->
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Nenhum post publicado ainda.</p>
-{% endif %}
+    {% if recent_posts %}
+      <div class="vstack gap-3">
+        {% for p in recent_posts %}
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-3 {% cycle 'bg-body-tertiary' 'bg-light' 'bg-white' %}">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="me-2">@{{ p.author.username }}</strong>
+                <span class="text-body-secondary small">{{ p.created_at|date:"d/m/Y H:i" }}</span>
+              </div>
+              <p class="mb-2">{{ p.message|linebreaksbr }}</p>
+              <a class="btn btn-sm btn-outline-primary m-1" href="{% url 'posts:detail' p.pk %}">Ver</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-secondary">Nenhum post publicado ainda.</div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

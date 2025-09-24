@@ -1,11 +1,22 @@
 {% extends "base.html" %}
-{% block title %}{{ view.object|default_if_none:"Novo Post" }} — {{ block.super }}{% endblock %}
+{% block title %}{% if view.object %}Editar Post{% else %}Novo Post{% endif %} — {{ block.super }}{% endblock %}
+
 {% block content %}
-<h2>{% if view.object %}Editar Post{% else %}Novo Post{% endif %}</h2>
-<form method="post" novalidate>
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn">{% if view.object %}Salvar{% else %}Publicar{% endif %}</button>
-  <a href="{% url 'posts:list' %}" class="btn btn-outlined">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 bg-light">
+        <h2 class="h4 mb-3">{% if view.object %}Editar Post{% else %}Novo Post{% endif %}</h2>
+        <form method="post" novalidate class="vstack gap-3">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary m-1">{% if view.object %}Salvar{% else %}Publicar{% endif %}</button>
+            <a href="{% url 'posts:list' %}" class="btn btn-outline-secondary m-1">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

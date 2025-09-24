@@ -1,12 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Excluir Post — {{ block.super }}{% endblock %}
+
 {% block content %}
-<h2>Excluir Post</h2>
-<p>Tem certeza que deseja excluir este post?</p>
-<blockquote>{{ object.message }}</blockquote>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit" class="btn danger">Excluir</button>
-  <a href="{% url 'posts:detail' object.pk %}" class="btn btn-outlined">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card border-danger-subtle shadow-sm border-0">
+      <div class="card-body p-4 bg-white">
+        <h2 class="h4 mb-3 text-danger">Excluir Post</h2>
+        <p>Tem certeza que deseja excluir este post?</p>
+        <blockquote class="blockquote border rounded p-3 bg-body-tertiary m-1">
+          <p class="mb-0">{{ object.message|linebreaksbr }}</p>
+        </blockquote>
+        <form method="post" class="d-flex flex-wrap gap-2 mt-3">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger m-1">Excluir</button>
+          <a href="{% url 'posts:detail' object.pk %}" class="btn btn-outline-secondary m-1">Cancelar</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

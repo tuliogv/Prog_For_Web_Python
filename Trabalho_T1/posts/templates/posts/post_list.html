@@ -1,38 +1,63 @@
 {% extends "base.html" %}
 {% block title %}Timeline — {{ block.super }}{% endblock %}
+
 {% block content %}
-<h2>Timeline</h2>
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+  <h2 class="h4 mb-0">Timeline</h2>
+  {% if user.is_authenticated %}
+    <a href="{% url 'posts:create' %}" class="btn btn-primary m-1">Novo post</a>
+  {% endif %}
+</div>
 
 {% if posts %}
-  <ul class="cards">
+  <div class="vstack gap-3">
     {% for p in posts %}
-      <li class="card">
-        <div class="card-head">
-          <strong>@{{ p.author.username }}</strong>
-          <span class="muted">{{ p.created_at|date:"d/m/Y H:i" }}</span>
-        </div>
-        <p>{{ p.message|linebreaksbr }}</p>
-        <div class="card-actions">
-          <a href="{% url 'posts:detail' p.pk %}">Ver</a>
-          {% if user.is_authenticated %}
-            {% if user.is_staff or user.id == p.author_id %}
-              • <a href="{% url 'posts:update' p.pk %}">Editar</a>
-              • <a href="{% url 'posts:delete' p.pk %}">Excluir</a>
+      <article class="card shadow-sm border-0">
+        <div class="card-body p-4 {% cycle 'bg-body-tertiary' 'bg-light' 'bg-white' %}">
+          <header class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center">
+              <strong class="me-2">@{{ p.author.username }}</strong>
+              <span class="badge text-bg-secondary m-1">post</span>
+            </div>
+            <time class="text-body-secondary small">{{ p.created_at|date:"d/m/Y H:i" }}</time>
+          </header>
+
+          <p class="mb-3">{{ p.message|linebreaksbr }}</p>
+
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <a class="btn btn-sm btn-outline-primary m-1" href="{% url 'posts:detail' p.pk %}">Ver</a>
+            {% if user.is_authenticated %}
+              {% if user.is_staff or user.id == p.author_id %}
+                <a class="btn btn-sm btn-outline-secondary m-1" href="{% url 'posts:update' p.pk %}">Editar</a>
+                <a class="btn btn-sm btn-outline-danger m-1" href="{% url 'posts:delete' p.pk %}">Excluir</a>
+              {% endif %}
             {% endif %}
-          {% endif %}
+          </div>
         </div>
-      </li>
+      </article>
     {% endfor %}
-  </ul>
+  </div>
 
   {% if is_paginated %}
-    <div class="pagination">
-      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">« Anterior</a>{% endif %}
-      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Próxima »</a>{% endif %}
-    </div>
+    <nav class="mt-4" aria-label="Paginação">
+      <ul class="pagination mb-0">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">« Anterior</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">« Anterior</span></li>
+        {% endif %}
+
+        <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima »</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Próxima »</span></li>
+        {% endif %}
+      </ul>
+    </nav>
   {% endif %}
 {% else %}
-  <p>Nenhum post por aqui…</p>
+  <div class="alert alert-secondary">Nenhum post por aqui…</div>
 {% endif %}
 {% endblock %}

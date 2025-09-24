@@ -1,20 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Post — {{ block.super }}{% endblock %}
+
 {% block content %}
-<article class="card">
-  <div class="card-head">
-    <strong>@{{ post.author.username }}</strong>
-    <span class="muted">{{ post.created_at|date:"d/m/Y H:i" }}</span>
+<article class="card shadow-sm border-0">
+  <div class="card-body p-4 bg-body-tertiary">
+    <header class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex align-items-center">
+        <strong class="me-2">@{{ post.author.username }}</strong>
+        <span class="badge text-bg-secondary m-1">post</span>
+      </div>
+      <time class="text-body-secondary small">{{ post.created_at|date:"d/m/Y H:i" }}</time>
+    </header>
+    <p class="mb-0">{{ post.message|linebreaksbr }}</p>
   </div>
-  <p>{{ post.message|linebreaksbr }}</p>
 </article>
-<p>
-  <a href="{% url 'posts:list' %}">Voltar</a>
+
+<div class="d-flex align-items-center gap-2 mt-3">
+  <a href="{% url 'posts:list' %}" class="btn btn-outline-secondary m-1">Voltar</a>
   {% if user.is_authenticated %}
     {% if user.is_staff or user.id == post.author_id %}
-      • <a href="{% url 'posts:update' post.pk %}">Editar</a>
-      • <a href="{% url 'posts:delete' post.pk %}">Excluir</a>
+      <a href="{% url 'posts:update' post.pk %}" class="btn btn-secondary m-1">Editar</a>
+      <a href="{% url 'posts:delete' post.pk %}" class="btn btn-danger m-1">Excluir</a>
     {% endif %}
   {% endif %}
-</p>
+</div>
 {% endblock %}
