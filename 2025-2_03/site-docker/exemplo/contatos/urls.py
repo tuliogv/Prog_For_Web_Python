@@ -1,4 +1,0 @@
-
-
-# URLs patterns
-urlpatterns = []
