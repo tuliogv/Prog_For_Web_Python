@@ -1,4 +1,4 @@
-# MiniTwitter de Textos — Django (sem JavaScript)
+# MiniTwitter — Django (sem JavaScript)
 
 Projeto acadêmico completo de um microblog (tipo “Twitter de texto”) feito com **Django 5**, **HTML** e **Bootstrap (apenas CSS, via CDN)**.
 O objetivo é demonstrar um CRUD completo, autenticação, autorização, MVT do Django e publicação em container, mantendo **zero JavaScript**.
@@ -7,27 +7,33 @@ O objetivo é demonstrar um CRUD completo, autenticação, autorização, MVT do
 
 ## Sumário
 
-* [Recursos do projeto](#recursos-do-projeto)
-* [Arquitetura (MVT) e módulos do Django](#arquitetura-mvt-e-módulos-do-django)
-
-  * [Model](#model)
-  * [View](#view)
-  * [Template](#template)
-  * [URLs/Rotas](#urlsrotas)
-  * [Forms](#forms)
-  * [Autenticação/Autorização](#autenticaçãoautorização)
-  * [Arquivos estáticos](#arquivos-estáticos)
-  * [Configurações principais](#configurações-principais)
-* [Estrutura de diretórios](#estrutura-de-diretórios)
-* [Como executar localmente](#como-executar-localmente)
-* [Como executar com Docker](#como-executar-com-docker)
-* [Deploy em um PaaS (ex.: Render/Railway)](#deploy-em-um-paas-ex-renderrailway)
-* [Banco de dados](#banco-de-dados)
-* [Operações CRUD implementadas](#operações-crud-implementadas)
-* [Boas práticas de colaboração (GitHub)](#boas-práticas-de-colaboração-github)
-* [Testes rápidos (opcional)](#testes-rápidos-opcional)
-* [Resolução de problemas](#resolução-de-problemas)
-* [Licença](#licença)
+- [MiniTwitter — Django (sem JavaScript)](#minitwitter--django-sem-javascript)
+  - [Sumário](#sumário)
+  - [Recursos do projeto](#recursos-do-projeto)
+  - [Arquitetura (MVT) e módulos do Django](#arquitetura-mvt-e-módulos-do-django)
+    - [Model](#model)
+    - [View](#view)
+    - [Template](#template)
+    - [URLs/Rotas](#urlsrotas)
+    - [Forms](#forms)
+    - [Autenticação/Autorização](#autenticaçãoautorização)
+    - [Arquivos estáticos](#arquivos-estáticos)
+    - [Configurações principais](#configurações-principais)
+  - [Estrutura de diretórios](#estrutura-de-diretórios)
+  - [Como executar localmente](#como-executar-localmente)
+    - [Pré-requisitos](#pré-requisitos)
+    - [Passo a passo](#passo-a-passo)
+  - [Como executar com Docker](#como-executar-com-docker)
+    - [Arquivos](#arquivos)
+    - [Build e Run](#build-e-run)
+  - [Deploy em um PaaS (ex.: Render/Railway)](#deploy-em-um-paas-ex-renderrailway)
+  - [Banco de dados](#banco-de-dados)
+  - [Operações CRUD implementadas](#operações-crud-implementadas)
+  - [Boas práticas de colaboração (GitHub)](#boas-práticas-de-colaboração-github)
+  - [Testes rápidos (opcional)](#testes-rápidos-opcional)
+  - [Resolução de problemas](#resolução-de-problemas)
+  - [Licença](#licença)
+    - [Anexo: versões das dependências (sugeridas)](#anexo-versões-das-dependências-sugeridas)
 
 ---
 
