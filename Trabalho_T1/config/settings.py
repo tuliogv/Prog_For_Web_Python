@@ -116,6 +116,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CSRF Trusted (mantém amplo p/ DEV; em prod, restrinja)
 # -------------------------
 CODESPACES_HOST_SUFFIX = os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN", "app.github.dev")
+ALLOWED_HOSTS = ["*",]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "http://localhost:8000",
