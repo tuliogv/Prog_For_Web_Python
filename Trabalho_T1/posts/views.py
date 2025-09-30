@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 
 from .models import Post
-from .forms import PostForm, SignUpForm
+from .forms import PostForm, SignUpForm, AttachmentFormSet
 
 # ---------------------------
 # Timeline pública (somente leitura)
@@ -29,9 +29,25 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     template_name = "posts/post_form.html"
     success_url = reverse_lazy("posts:list")
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if self.request.POST:
+            ctx["formset"] = AttachmentFormSet(self.request.POST, self.request.FILES)
+        else:
+            ctx["formset"] = AttachmentFormSet()
+        return ctx
+
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        context = self.get_context_data()
+        formset = context["formset"]
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 class OwnerOrStaffRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -43,6 +59,25 @@ class PostUpdateView(LoginRequiredMixin, OwnerOrStaffRequiredMixin, UpdateView):
     form_class = PostForm
     template_name = "posts/post_form.html"
     success_url = reverse_lazy("posts:list")
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if self.request.POST:
+            ctx["formset"] = AttachmentFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            ctx["formset"] = AttachmentFormSet(instance=self.object)
+        return ctx
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context["formset"]
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 class PostDeleteView(LoginRequiredMixin, OwnerOrStaffRequiredMixin, DeleteView):
     model = Post

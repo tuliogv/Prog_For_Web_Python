@@ -96,12 +96,31 @@ USE_I18N = True
 USE_TZ = True
 
 # -------------------------
-# Estáticos
+# Estaticos
 # -------------------------
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Mídia de uploads de usuarios
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# Tamanho maximo por arquivo (em bytes). Ex.: 25MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
+DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
+
+# Tipos permitidos (usados na validacao do form)
+ALLOWED_MEDIA_CONTENT_TYPES = [
+    # imagens
+    "image/jpeg", "image/png",
+    # áudio
+    "audio/mp3",
+    # vídeo
+    "video/mp4",
+]
+MAX_UPLOAD_SIZE_BYTES = 25 * 1024 * 1024  # 25MB
 
 # -------------------------
 # Auth / Login

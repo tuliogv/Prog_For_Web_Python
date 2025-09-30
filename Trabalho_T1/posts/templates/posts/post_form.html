@@ -7,9 +7,28 @@
     <div class="card shadow-sm border-0">
       <div class="card-body p-4 bg-light">
         <h2 class="h4 mb-3">{% if view.object %}Editar Post{% else %}Novo Post{% endif %}</h2>
-        <form method="post" novalidate class="vstack gap-3">
+
+        <!-- IMPORTANTE: enctype para upload -->
+        <form method="post" enctype="multipart/form-data" novalidate class="vstack gap-3">
           {% csrf_token %}
           {{ form.as_p }}
+
+          <fieldset class="border rounded p-3">
+            <legend class="float-none w-auto px-2 h6 mb-3">Anexos (imagens, vídeos, áudios)</legend>
+            {{ formset.management_form }}
+            <div class="vstack gap-3">
+              {% for f in formset.forms %}
+                <div class="card border-0 bg-white p-3">
+                  {{ f.as_p }}
+                  {% if f.instance.pk %}
+                    <small class="text-body-secondary">Atual: <a href="{{ f.instance.file.url }}" target="_blank">{{ f.instance.original_name|default:f.instance.file.name }}</a></small>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            <p class="text-body-secondary small mt-2 mb-0">Você pode anexar até {{ formset.forms|length }} arquivos por envio. Tipos permitidos: imagens, vídeos ou áudios.</p>
+          </fieldset>
+
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary m-1">{% if view.object %}Salvar{% else %}Publicar{% endif %}</button>
             <a href="{% url 'posts:list' %}" class="btn btn-outline-secondary m-1">Cancelar</a>
