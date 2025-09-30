@@ -112,6 +112,9 @@ LOGOUT_REDIRECT_URL = "login"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Para testes: e-mails vão aparecer no terminal
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # -------------------------
 # CSRF Trusted (mantém amplo p/ DEV; em prod, restrinja)
 # -------------------------

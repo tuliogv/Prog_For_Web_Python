@@ -8,13 +8,16 @@
       <div class="card-body p-4">
         <h2 class="h4 mb-3">Entrar</h2>
         <form method="post" novalidate class="vstack gap-3">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary m-1">Entrar</button>
-            <a href="{% url 'signup' %}" class="btn btn-outline-secondary m-1">Registrar</a>
-          </div>
-        </form>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary m-1">Entrar</button>
+              <a href="{% url 'signup' %}" class="btn btn-outline-secondary m-1">Registrar</a>
+            </div>
+            <div class="mt-3">
+              <a href="{% url 'password_reset' %}">Esqueceu sua senha?</a>
+            </div>
+          </form>
       </div>
     </div>
   </div>
