@@ -1,6 +1,6 @@
 # MiniTwitter — Django (sem JavaScript)
 
-Projeto acadêmico completo de um microblog (tipo “Twitter de texto”) feito com **Django 5**, **HTML** e **Bootstrap (apenas CSS, via CDN)**.
+Projeto acadêmico completo de um microblog (tipo “Twitter”) feito com **Django 5**, **HTML** e **Bootstrap (apenas CSS, via CDN)**.
 O objetivo é demonstrar um CRUD completo, autenticação, autorização, MVT do Django e publicação em container, mantendo **zero JavaScript**.
 
 ---
@@ -19,7 +19,6 @@ O objetivo é demonstrar um CRUD completo, autenticação, autorização, MVT do
     - [Autenticação/Autorização](#autenticaçãoautorização)
     - [Arquivos estáticos](#arquivos-estáticos)
     - [Configurações principais](#configurações-principais)
-  - [Estrutura de diretórios](#estrutura-de-diretórios)
   - [Como executar localmente](#como-executar-localmente)
     - [Pré-requisitos](#pré-requisitos)
     - [Passo a passo](#passo-a-passo)
@@ -227,51 +226,6 @@ urlpatterns = [
 * **Proxy TLS (Codespaces/PaaS)**
 
   * `SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")`
-
----
-
-## Estrutura de diretórios
-
-```
-Trabalho_T1/
-├─ config/
-│  ├─ __init__.py
-│  ├─ asgi.py
-│  ├─ middleware.py             # (opcional DEV) DisableCSRFMiddleware
-│  ├─ settings.py
-│  ├─ urls.py
-│  └─ wsgi.py
-├─ posts/
-│  ├─ migrations/
-│  ├─ templates/
-│  │  ├─ base.html
-│  │  ├─ registration/
-│  │  │  ├─ login.html
-│  │  │  └─ signup.html
-│  │  └─ posts/
-│  │     ├─ post_list.html
-│  │     ├─ post_detail.html
-│  │     ├─ post_form.html
-│  │     └─ post_confirm_delete.html
-│  ├─ __init__.py
-│  ├─ admin.py
-│  ├─ apps.py
-│  ├─ forms.py
-│  ├─ models.py
-│  ├─ urls.py
-│  └─ views.py
-├─ static/
-│  └─ css/
-│     └─ main.css              # (opcional, se quiser retoques próprios)
-├─ manage.py
-├─ requirements.txt
-├─ Dockerfile
-├─ .dockerignore
-├─ .gitignore
-└─ README.md (este arquivo)
-```
-
----
 
 ## Como executar localmente
 
