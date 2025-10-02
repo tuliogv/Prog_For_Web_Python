@@ -7,3 +7,17 @@ __pycache__/
 staticfiles/
 db.sqlite3
 .env
+
+*.jpeg
+*.png
+*.gif
+*.webp
+
+*.mpeg
+*.mp3
+*.ogg
+*.wav
+
+*.mp4
+*.webm
+*.ogg
