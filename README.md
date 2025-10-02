@@ -299,52 +299,18 @@ python manage.py runserver 0.0.0.0:8000
 
 ## Como executar com Docker
 
-### Arquivos
+>> 
+# 3.1 Build da imagem
+make docker-build
 
-* **Dockerfile**: usa `python:3.12-slim`, instala `requirements.txt`, roda `collectstatic` e inicia **Gunicorn**.
-* **.dockerignore**: ignora `.venv`, `__pycache__`, `db.sqlite3`, etc.
+# 3.2 Subir o container (em background)
+make docker-run
 
-### Build e Run
+# 3.3 (primeira vez) migrar e criar superusuário dentro do container
+make docker-migrate
+make docker-super
+>>
 
-```bash
-# Na raiz do projeto
-docker build -t minitwitter .
-docker run --rm -p 8000:8000 \
-  -e DEBUG=0 \
-  -e SECRET_KEY="troque" \
-  -e ALLOWED_HOSTS="localhost,127.0.0.1" \
-  minitwitter
-```
-
-* App em `http://localhost:8000`
-* Caso use Postgres, adicione:
-  `-e DATABASE_URL="postgres://user:pass@host:5432/dbname"`
-
-> No primeiro deploy real (com Postgres), execute dentro do container (ou via job/shell do PaaS):
-> `python manage.py migrate && python manage.py createsuperuser && python manage.py collectstatic --noinput`
-
----
-
-## Deploy em um PaaS (ex.: Render/Railway)
-
-1. Conecte seu **repositório GitHub**.
-2. Configure **serviço Web** com **Docker** (ele detecta o `Dockerfile`).
-3. **Variáveis de ambiente**:
-
-   * `SECRET_KEY` (obrigatório)
-   * `DEBUG=0`
-   * `ALLOWED_HOSTS="seu-dominio.com,seuapp.onrender.com"`
-   * `CSRF_TRUSTED_ORIGINS="https://seu-dominio.com,https://seuapp.onrender.com"`
-   * `DATABASE_URL` (se usar Postgres gerenciado)
-4. Após o primeiro deploy, rode:
-
-   * `python manage.py migrate`
-   * `python manage.py createsuperuser`
-   * `python manage.py collectstatic --noinput`
-
-**Estáticos**: WhiteNoise já serve os assets no próprio container.
-
----
 
 ## Banco de dados
 
