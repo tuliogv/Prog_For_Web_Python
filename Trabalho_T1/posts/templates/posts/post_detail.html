@@ -11,7 +11,32 @@
       </div>
       <time class="text-body-secondary small">{{ post.created_at|date:"d/m/Y H:i" }}</time>
     </header>
-    <p class="mb-0">{{ post.message|linebreaksbr }}</p>
+
+    <p class="mb-3">{{ post.message|linebreaksbr }}</p>
+
+    {% if post.attachments.all %}
+      <div class="row g-3">
+        {% for a in post.attachments.all %}
+          <div class="col-12">
+            {% if a.content_type|slice:":6" == "image/" %}
+              <img src="{{ a.file.url }}" alt="{{ a.original_name }}" class="img-fluid rounded">
+            {% elif a.content_type|slice:":6" == "audio/" %}
+              <audio controls class="w-100">
+                <source src="{{ a.file.url }}" type="{{ a.content_type }}">
+                Seu navegador não suporta áudio HTML5.
+              </audio>
+            {% elif a.content_type|slice:":6" == "video/" %}
+              <video controls class="w-100 rounded">
+                <source src="{{ a.file.url }}" type="{{ a.content_type }}">
+                Seu navegador não suporta vídeo HTML5.
+              </video>
+            {% else %}
+              <a class="btn btn-sm btn-outline-secondary" href="{{ a.file.url }}" target="_blank">Baixar: {{ a.original_name|default:a.file.name }}</a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
 </article>
 

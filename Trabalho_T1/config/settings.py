@@ -114,11 +114,11 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024
 # Tipos permitidos (usados na validacao do form)
 ALLOWED_MEDIA_CONTENT_TYPES = [
     # imagens
-    "image/jpeg", "image/png",
+    "image/jpeg", "image/png", "image/gif", "image/webp",
     # áudio
-    "audio/mp3",
+    "audio/mpeg", "audio/mp3", "audio/ogg", "audio/wav",
     # vídeo
-    "video/mp4",
+    "video/mp4", "video/webm", "video/ogg",
 ]
 MAX_UPLOAD_SIZE_BYTES = 25 * 1024 * 1024  # 25MB
 
