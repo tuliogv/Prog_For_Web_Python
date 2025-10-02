@@ -29,6 +29,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     template_name = "posts/post_form.html"
     success_url = reverse_lazy("posts:list")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.object = None
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         if self.request.POST:
@@ -59,6 +63,10 @@ class PostUpdateView(LoginRequiredMixin, OwnerOrStaffRequiredMixin, UpdateView):
     form_class = PostForm
     template_name = "posts/post_form.html"
     success_url = reverse_lazy("posts:list")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.object = None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
