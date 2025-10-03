@@ -8,7 +8,9 @@ from django.conf import settings
 from .models import Post, Attachment
 
 class PostForm(forms.ModelForm):
+    """Formulário para criar/editar posts."""
     class Meta:
+        """Forma e widgets do Post."""
         model = Post
         fields = ["message"]
         widgets = {
@@ -16,7 +18,9 @@ class PostForm(forms.ModelForm):
         }
 
 class SignUpForm(UserCreationForm):
+    """Formulário de cadastro sem mensagens/validações de senha."""
     class Meta:
+        """Define o modelo e campos do formulário de cadastro."""
         model = User
         fields = ("username", "password1", "password2")
         # Tira todos os help_texts padrão:
@@ -34,7 +38,9 @@ class SignUpForm(UserCreationForm):
         self.fields["password2"].widget.attrs.update({"placeholder": "Confirme a senha"})
 
 class AttachmentForm(forms.ModelForm):
+    """Formulário para anexos de mídia (imagens, áudio, vídeo)."""
     class Meta:
+        """Define o modelo, campos, widgets e validações do formulário de anexos."""
         model = Attachment
         fields = ["file"]
         widgets = {
@@ -42,6 +48,7 @@ class AttachmentForm(forms.ModelForm):
         }
 
         def clean_file(self):
+            """Valida tamanho e tipo do arquivo."""
             f = self.cleaned_data.get("file")
             if not f:
                 return f
