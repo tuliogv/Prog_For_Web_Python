@@ -2,7 +2,7 @@
 <html lang="pt-br" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}MiniTwitter Texto{% endblock %}</title>
+  <title>{% block title %}MiniTwitter{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   {% load static %}
@@ -20,7 +20,7 @@
   <header class="border-bottom mb-4">
     <nav class="navbar navbar-expand-md bg-body-tertiary">
       <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'posts:list' %}">MiniTwitter (texto)</a>
+        <a class="navbar-brand fw-bold" href="{% url 'posts:list' %}">MiniTwitter</a>
 
         <div class="ms-auto d-flex align-items-center gap-2">
           {% if user.is_authenticated %}
