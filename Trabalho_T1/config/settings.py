@@ -20,8 +20,18 @@ _default_allowed = ["localhost", "127.0.0.1"]
 _env_allowed = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()]
 ALLOWED_HOSTS = _env_allowed or (_default_allowed if DEBUG else _default_allowed)
 
+# --- ADIÇÃO: Liberar TODOS os hosts via toggle (padrão: ligado) ----------------
+# Use ALLOW_ALL_HOSTS=0 para desativar isso (recomendado em produção).
+if os.getenv("ALLOW_ALL_HOSTS", "1") == "1":
+    ALLOWED_HOSTS = ["*"]
+
 # Se estiver atrás de proxy TLS (Codespaces/Render/Railway), mantenha:
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# --- ADIÇÃO (opcional): Confiar no X-Forwarded-Host quando atrás de proxy ------
+# Útil para não tomar DisallowedHost dependendo do balanceador/proxy.
+# USE_X_FORWARDED_HOST=1 para ativar (por padrão, desativado).
+USE_X_FORWARDED_HOST = os.getenv("USE_X_FORWARDED_HOST", "0") == "1"
 
 # -----------------------------------------------------------------------------
 # Apps / Middleware

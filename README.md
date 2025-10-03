@@ -3,6 +3,12 @@
 Projeto acadêmico completo de um microblog (tipo “Twitter”) feito com **Django 5**, **HTML** e **Bootstrap (apenas CSS, via CDN)**.
 O objetivo é demonstrar um CRUD completo, autenticação, autorização, MVT do Django e publicação em container, mantendo **zero JavaScript**.
 
+Integrantes do Grupo:
+Thiago Henriques
+Tulio Gomes
+
+Link para acessar o site: http://3.88.104.254:8000/
+
 ---
 
 ## Sumário
@@ -23,14 +29,20 @@ O objetivo é demonstrar um CRUD completo, autenticação, autorização, MVT do
     - [Pré-requisitos](#pré-requisitos)
     - [Passo a passo](#passo-a-passo)
   - [Como executar com Docker](#como-executar-com-docker)
-    - [Arquivos](#arquivos)
-    - [Build e Run](#build-e-run)
-  - [Deploy em um PaaS (ex.: Render/Railway)](#deploy-em-um-paas-ex-renderrailway)
+- [3.1 Build da imagem](#31-build-da-imagem)
+- [3.2 Subir o container (em background)](#32-subir-o-container-em-background)
+- [3.3 (primeira vez) migrar e criar superusuário dentro do container](#33-primeira-vez-migrar-e-criar-superusuário-dentro-do-container)
   - [Banco de dados](#banco-de-dados)
   - [Operações CRUD implementadas](#operações-crud-implementadas)
   - [Boas práticas de colaboração (GitHub)](#boas-práticas-de-colaboração-github)
   - [Testes rápidos (opcional)](#testes-rápidos-opcional)
   - [Resolução de problemas](#resolução-de-problemas)
+- [A) Usando a imagem publicada no Docker Hub (sem código-fonte)](#a-usando-a-imagem-publicada-no-docker-hub-sem-código-fonte)
+- [B) Buildar a imagem a partir do código (usando o Makefile)](#b-buildar-a-imagem-a-partir-do-código-usando-o-makefile)
+  - [Variáveis que você pode trocar “on the fly”](#variáveis-que-você-pode-trocar-on-the-fly)
+  - [Dicas de produção/servidor](#dicas-de-produçãoservidor)
+  - [Troubleshooting rápido](#troubleshooting-rápido)
+  - [Resumo dos comandos principais](#resumo-dos-comandos-principais)
   - [Licença](#licença)
     - [Anexo: versões das dependências (sugeridas)](#anexo-versões-das-dependências-sugeridas)
 
