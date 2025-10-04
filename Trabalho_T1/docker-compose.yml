@@ -1,0 +1,18 @@
+# Trabalho_T1/docker-compose.yml
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: trabalho_t1_dev
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "1"
+      USE_GUNICORN: "0"
+      # Para SQLite não precisa de DB externo
+      # Se usar Postgres no futuro, exporte DATABASE_URL aqui
+      ALLOWED_HOSTS: "*"
+      SECRET_KEY: "dev-secret-key-unsafe"
+    volumes:
+      - .:/app

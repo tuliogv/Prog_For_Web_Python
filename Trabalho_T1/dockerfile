@@ -1,28 +1,44 @@
-FROM python:3.12-slim
+# Trabalho_T1/Dockerfile
+FROM python:3.10-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DJANGO_SETTINGS_MODULE=config.settings \
-    PORT=8000 \
-    DEBUG=0
+    PIP_NO_CACHE_DIR=1
 
-# libs do sistema (inclui libpq para Postgres)
+# Dependências básicas
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential curl ca-certificates libpq5 libpq-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Diretório do app
 WORKDIR /app
 
-# dependências primeiro (melhor cache)
+# Instala deps primeiro (cache melhor)
 COPY requirements.txt /app/
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install -r requirements.txt \
+    || (pip install --upgrade pip setuptools wheel && pip install -r requirements.txt) \
+    && pip install gunicorn
 
-# copia o projeto
+# Copia o código do projeto (conteúdo da pasta Trabalho_T1)
 COPY . /app/
 
-# coleta estáticos para produção
-RUN python manage.py collectstatic --noinput
+# Usuário sem privilégios + permissões para SQLite e estáticos
+RUN useradd -m appuser \
+ && mkdir -p /app/staticfiles /app/media \
+ && chown -R appuser:appuser /app
+USER appuser
 
 EXPOSE 8000
-CMD gunicorn config.wsgi:application --bind 0.0.0.0:${PORT} --workers 3 --timeout 120
+
+# Defaults (você pode sobrescrever via docker run)
+ENV DEBUG=1 \
+    USE_GUNICORN=0 \
+    DJANGO_SETTINGS_MODULE=config.settings \
+    PYTHONPATH=/app \
+    DJANGO_SUPERUSER_USERNAME=admin \
+    DJANGO_SUPERUSER_EMAIL=admin@example.com \
+    DJANGO_SUPERUSER_PASSWORD=admin123 \
+    ALLOWED_HOSTS="*"
+
+ENTRYPOINT ["/app/entrypoint.sh"]
