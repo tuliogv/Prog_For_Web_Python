@@ -9,6 +9,10 @@ Tulio Gomes
 
 Link para acessar o site: http://3.88.104.254:8000/
 
+Apenas após rodar os comandos do Docker
+
+(Fica ativo após aproximadamente 3 horas)
+
 ---
 
 ## Sumário
@@ -28,14 +32,9 @@ Link para acessar o site: http://3.88.104.254:8000/
   - [Como executar localmente](#como-executar-localmente)
     - [Pré-requisitos](#pré-requisitos)
     - [Passo a passo](#passo-a-passo)
-  - [Como executar com Docker](#como-executar-com-docker)
-- [3.1 Build da imagem](#31-build-da-imagem)
-- [3.2 Subir o container (em background)](#32-subir-o-container-em-background)
-- [3.3 (primeira vez) migrar e criar superusuário dentro do container](#33-primeira-vez-migrar-e-criar-superusuário-dentro-do-container)
   - [Banco de dados](#banco-de-dados)
   - [Operações CRUD implementadas](#operações-crud-implementadas)
   - [Boas práticas de colaboração (GitHub)](#boas-práticas-de-colaboração-github)
-  - [Testes rápidos (opcional)](#testes-rápidos-opcional)
   - [Resolução de problemas](#resolução-de-problemas)
 - [A) Usando a imagem publicada no Docker Hub (sem código-fonte)](#a-usando-a-imagem-publicada-no-docker-hub-sem-código-fonte)
 - [B) Buildar a imagem a partir do código (usando o Makefile)](#b-buildar-a-imagem-a-partir-do-código-usando-o-makefile)
@@ -307,22 +306,39 @@ python manage.py runserver 0.0.0.0:8000
 
 > **Codespaces/Proxies**: se usar `https://<codespace>-8000.app.github.dev`, inclua esse domínio em `CSRF_TRUSTED_ORIGINS` e `ALLOWED_HOSTS`.
 
+9. **Arrumar security group**:
+> Inbound rule
+		TCP -> port 8000 for 0.0.0.0/0
+
+
+http://34.227.111.218:8000/
+
+Ao configurar o EC2:
+
+
+Comandos:
+
+sudo apt-get update
+
+git clone https://github.com/tuliogv/Prog_For_Web_Python
+
+sudo apt install python3-pip -y
+
+pip install django
+
+python3 -m pip install --upgrade pip setuptools wheel
+
+pip install -r requirements.txt
+
+python3 manage.py makemigrations
+
+python3 manage.py migrate
+
+python3 manage.py createsuperuser
+
+python3 manage.py runserver 0.0.0.0:8000
+
 ---
-
-## Como executar com Docker
-
->> 
-# 3.1 Build da imagem
-make docker-build
-
-# 3.2 Subir o container (em background)
-make docker-run
-
-# 3.3 (primeira vez) migrar e criar superusuário dentro do container
-make docker-migrate
-make docker-super
->>
-
 
 ## Banco de dados
 
@@ -362,44 +378,6 @@ postgres://usuario:senha@host:5432/nomedb
 * Commits pequenos e descritivos.
 * `db.sqlite3` e `.env` **não** devem ir para o Git (estão no `.gitignore`).
 * Releases/Tags para marcos do projeto.
-
----
-
-## Testes rápidos (opcional)
-
-Instale `pytest` e `pytest-django` (opcional):
-
-```bash
-pip install pytest pytest-django
-```
-
-Crie `pytest.ini`:
-
-```ini
-[pytest]
-DJANGO_SETTINGS_MODULE = config.settings
-python_files = tests.py test_*.py *_tests.py
-```
-
-Exemplo mínimo de teste em `posts/tests/test_models.py`:
-
-```python
-import pytest
-from django.contrib.auth.models import User
-from posts.models import Post
-
-@pytest.mark.django_db
-def test_post_str():
-    u = User.objects.create(username="alice")
-    p = Post.objects.create(author=u, message="olá mundo")
-    assert "alice" in str(p)
-```
-
-Rode:
-
-```bash
-pytest -q
-```
 
 ---
 
